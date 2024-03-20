@@ -17,12 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,re_path, include
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("book/", include("bookinstance.urls")),
     re_path(r'^api-auth/', include('rest_framework.urls')),
     re_path(r"^api/v1/books/", include('bookinstance.urls')),
-    path('account/', include('django.contrib.auth.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
 ]
 
 # ba in reavesh mitone ye url baray login kardan tarif koni be form osoli tar

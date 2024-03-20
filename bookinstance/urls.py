@@ -3,7 +3,7 @@ from .views import *
 
 
 urlpatterns = [
-    path("", BookListView.as_view(), name="booklist"),
+    path("", login_required(BookListView.as_view()), name="booklist"),
     path("book-detail/<int:pk>/", BookDeatail.as_view(), name="bookdetail"),
     re_path(r"^get/$", ListCreateCource.as_view(), name="apilistbook"),
     re_path(r"^update/(?P<pk>\d+)/$", RetriveUpdateDestroy.as_view(), name="apibookupdate"),

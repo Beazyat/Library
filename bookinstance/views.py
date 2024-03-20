@@ -8,27 +8,32 @@ from rest_framework import generics
 
 from .models import *
 from .serializers import BookSerializers
-
-
-# def index(request):
-#     num_book = Book.objects.all().count()
-#     num_author = Author.objects.count()
-#     num_book_available = BookInstance.objects.filter(status__exact="a").count()
+from django.contrib.auth.decorators import login_required  # just for def and for redirect anonymous to login page
+from django.contrib.auth.mixins import LoginRequiredMixin
+'''
+def index(request):
+    num_book = Book.objects.all().count()
+    num_author = Author.objects.count()
+    num_book_available = BookInstance.objects.filter(status__exact="a").count()
     
-#     context = {
-#         "num_book" : num_book,
-#         "num_author" : num_author,
-#         "num_book_available" : num_book_available,
-#     }
-#     return render(request, "book/index.html", context)
+    context = {
+        "num_book" : num_book,
+        "num_author" : num_author,
+        "num_book_available" : num_book_available,
+    }
+    return render(request, "book/index.html", context)
+'''
 
 
-class BookListView(ListView):
+class BookListView(LoginRequiredMixin, ListView):
     model = Book
     template_name = "book/index.html"
     context_object_name = "book_list"
     extra_context = {'authors': Author.objects.all()}
     paginate_by = 5
+
+    login_url = 'accounts/login'
+    redirect_field_name = 'book/'
 
 
 class BookDeatail(DetailView):
@@ -37,14 +42,13 @@ class BookDeatail(DetailView):
     context_object_name = 'book'
 
 
-
 # class APIListBook(APIView):
 #     def get(self, request, format=None):
 #         books = Book.objects.all()
 #         serializer = BookSerializers(books, many=True)
-        
+
 #         return Response(serializer.data)
-        
+
 #     def post(self, request, format=None):
 #         serializers = BookSerializers(data = request.data)
 #         serializers.is_valid(raise_exception = True)
