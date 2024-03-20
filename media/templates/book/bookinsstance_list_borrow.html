@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My books</title>
+</head>
+<body>
+
+
+{% if book_instance %}
+<ul>
+
+    {% for book_inst in book_instance %}
+    <li>
+    <a href="{% url 'bookdetail' book_inst.book.pk %}">{{book_inst.book.title}} </a> <span>({{book_inst.due_back}})</span>
+    </li>
+    {% endfor %}
+
+    {% else %}
+    <h5>No books borrowed!</h5>
+</ul>
+{% endif %}
+</body>
+</html>

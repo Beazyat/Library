@@ -10,6 +10,9 @@ from .models import *
 from .serializers import BookSerializers
 from django.contrib.auth.decorators import login_required  # just for def and for redirect anonymous to login page
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
+# in library behet ejaze mide ke vase class base viewt ye test benevisi masalan:
+# agar user fagat email in bood in dastresi ro dashte bashe va betone az kelas estefade bokone
 '''
 def index(request):
     num_book = Book.objects.all().count()
@@ -67,3 +70,12 @@ class ListCreateCource(generics.ListCreateAPIView):
 class RetriveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializers
+
+class LoanListView(LoginRequiredMixin, ListView):
+    model = BookInstance
+    context_object_name = 'book_instance'
+    template_name = "book/bookinsstance_list_borrow.html"
+    paginate_by = 5
+
+    def get_queryset(self):
+        return BookInstance.objects.filter(borrower=self.request.user).filter(status__exact="b").order_by("due_back")

@@ -1,4 +1,6 @@
+from django.contrib.auth.models import User
 from django.db import models
+from datetime import date
 import uuid
 # Create your models here.
 
@@ -83,11 +85,12 @@ class BookInstance(models.Model):
 
     STATUS = (
             ('a', 'Available'),
-            ('d', 'Borrowed'),
+            ('b', 'Borrowed'),
             ('r', 'Reserved'),
             )
     status = models.CharField(max_length=1, choices=STATUS,
                               help_text="Book availability")
+    borrower = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return "%s , %s" % (self.book.title, self.status)
@@ -97,3 +100,12 @@ class BookInstance(models.Model):
         """
         bara in ke tartib dade hay in class bar asas 'status' taeen shavad
         """
+
+    @property
+    def is_overdue(self):
+        if self.due_back and date.today() > self.due_back:
+            return True
+        return False
+    # dar asl inja miyay va ye shart tarif mikonim va badantoy
+    # template estefade mikonim migim agar in shart ro dasht neshon bede.
+    # albate az in estefade nakardam dakhel template vali mishe estefade kard.
