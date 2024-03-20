@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Books</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{% static 'css/main.css' %}" />
+    </head>
+
+
+    <body>
+        {% if book_list %}
+
+            {% for book in book_list %}
+            <h3><a href="{% url 'bookdetail' book.id%}">{{book.title}}</a></h3>
+            {% endfor %}
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }} Pages
+            <br>
+            {% if is_paginated %}
+                {% if page_obj.has_previous %}
+                <a href="?page={{page_obj.previous_page_number}}">Previous</a>
+                {% endif %}
+
+                {% for i in paginator.page_range %}
+                    {% if page_obj.number == i %}
+                        <li class="page-item-disabled">
+                            <a class="page_link" href="#">{{i}}</a>
+                        </li>
+                    {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{request.path}}?page={{i}}">{{i}}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                {% if page_obj.has_next %}
+                <a href="?page={{page_obj.next_page_number}}">Next</a>
+                {% endif %}
+            {% endif %}
+        {% else %}
+        <h3>No book are found!</h3>
+        {% endif %}
+        
+    </body>
+</html>
