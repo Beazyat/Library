@@ -1,6 +1,19 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
 
+# for function
+from django.contrib.auth.decorators import login_required  # just for def and for redirect anonymous to login page
+
+# for generics
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
+# in library behet ejaze mide ke vase class base viewt ye test benevisi masalan:
+# agar user fagat email in bood in dastresi ro dashte bashe va betone az kelas estefade bokone
+
+from django.contrib.auth.mixins import PermissionRequiredMixin
+# mige bayad permision dashte bashi ta betone be class view dastresi dashte bashi
+
+
 # from rest_framework.views import APIView
 # from rest_framework.response import Response
 # from rest_framework import status
@@ -8,12 +21,9 @@ from rest_framework import generics
 
 from .models import *
 from .serializers import BookSerializers
-from django.contrib.auth.decorators import login_required  # just for def and for redirect anonymous to login page
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.mixins import UserPassesTestMixin
-# in library behet ejaze mide ke vase class base viewt ye test benevisi masalan:
-# agar user fagat email in bood in dastresi ro dashte bashe va betone az kelas estefade bokone
+
 '''
+@permission_required("permission_name[in meta of model")
 def index(request):
     num_book = Book.objects.all().count()
     num_author = Author.objects.count()
@@ -28,7 +38,7 @@ def index(request):
 '''
 
 
-class BookListView(LoginRequiredMixin, ListView):
+class BookListView(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     model = Book
     template_name = "book/index.html"
     context_object_name = "book_list"
@@ -38,8 +48,12 @@ class BookListView(LoginRequiredMixin, ListView):
     login_url = 'accounts/login'
     redirect_field_name = 'book/'
 
+    permission_required = 'bookinstance.vip'
+    # intory ta dastresi vip nadashte bashi nmitioni page ro bbini va error 403 mide
+    permission_required = 'user.can_edit'
+    # other permission form auth module
 
-class BookDeatail(DetailView):
+class BookDetail(DetailView):
     model = Book
     template_name = "book/detail.html"
     context_object_name = 'book'
@@ -70,6 +84,7 @@ class ListCreateCource(generics.ListCreateAPIView):
 class RetriveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializers
+
 
 class LoanListView(LoginRequiredMixin, ListView):
     model = BookInstance
