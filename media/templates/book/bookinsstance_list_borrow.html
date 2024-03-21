@@ -5,7 +5,7 @@
     <title>My books</title>
 </head>
 <body>
-
+{{ request.user }}
 
 {% if book_instance %}
 <ul>
@@ -19,6 +19,12 @@
     {% else %}
     <h5>No books borrowed!</h5>
 </ul>
+{% endif %}
+
+{% if perms.bookinstance.vip %}
+<h4>You are VIP user.</h4>
+{% else %}
+<h4>You haven't VIP access</h4>
 {% endif %}
 </body>
 </html>

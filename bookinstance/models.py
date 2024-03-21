@@ -100,6 +100,17 @@ class BookInstance(models.Model):
         """
         bara in ke tartib dade hay in class bar asas 'status' taeen shavad
         """
+        permissions = (
+            ("normal", "Normal"),
+            ("vip", "Vip"),            
+        )
+        '''
+        dar asl to inja permissions hay in model ro terif mikone va badan mitoni 
+        toy admin ham beheshon dastresi dashte bashi.
+        hala toy template mitoni ba dastor {%if perms.appname.permission_name%}
+        azash estefade koni va bazi chiza ro bayad afrad dastresi dashte bashan ta 
+        betonan bahash dastresi dashte bashan!
+        '''
 
     @property
     def is_overdue(self):
