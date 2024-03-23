@@ -10,8 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import datetime
 from pathlib import Path
 import os
+
+from django.conf import settings
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bookinstance.apps.BookinstanceConfig',
     'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -132,8 +136,20 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES" : ('rest_framework.authentication.SessionAuthentication',),
+    "DEFAULT_AUTHENTICATION_CLASSES":
+        ('rest_framework.authentication.SessionAuthentication',),
     # information afradi ke sabt nam kardan ro mide
-    "DEFAULT_PERMISSION_CLASSES" : ('rest_framework.permissions.IsAuthenticatedOrReadOnly',)
+    "DEFAULT_PERMISSION_CLASSES":
+        ('rest_framework.permissions.IsAuthenticatedOrReadOnly',),
     # yani agar login karde bood va permission dasht bezar taghhir bede vagarna readonly.
+}
+
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=100),
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=100),
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_AUTH_HEADER_PREFIX': 'Token',
+    'JWT_DECODE_HANDLER':
+                    'rest_framework_jwt.utils.jwt_decode_handler',
+    'JWT_SECRET_KEY': settings.SECRET_KEY,
 }

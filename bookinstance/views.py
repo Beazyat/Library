@@ -18,9 +18,16 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 # from rest_framework.response import Response
 # from rest_framework import status
 from rest_framework import generics
+from rest_framework import permissions
+from django.contrib.auth.hashers import make_password
+
+# for create view for jwt signup
+from django.contrib.auth.models import User
+
 
 from .models import *
-from .serializers import BookSerializers
+from .serializers import BookSerializers, jwtserializer
+
 
 '''
 @permission_required("permission_name[in meta of model")
@@ -53,6 +60,7 @@ class BookListView(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     permission_required = 'user.can_edit'
     # other permission form auth module
 
+
 class BookDetail(DetailView):
     model = Book
     template_name = "book/detail.html"
@@ -76,6 +84,16 @@ All of that codes using for made api and use that for get and save post in datab
 """
 
 
+class LoanListView(LoginRequiredMixin, ListView):
+    model = BookInstance
+    context_object_name = 'book_instance'
+    template_name = "book/bookinsstance_list_borrow.html"
+    paginate_by = 5
+
+    def get_queryset(self):
+        return BookInstance.objects.filter(borrower=self.request.user).filter(status__exact="b").order_by("due_back")
+
+
 class ListCreateCource(generics.ListCreateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializers
@@ -86,11 +104,25 @@ class RetriveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = BookSerializers
 
 
-class LoanListView(LoginRequiredMixin, ListView):
-    model = BookInstance
-    context_object_name = 'book_instance'
-    template_name = "book/bookinsstance_list_borrow.html"
-    paginate_by = 5
+class UserView(generics.ListCreateAPIView):
+    model = User
+    permission_classes = [permissions.AllowAny]
+    queryset = User.objects.all()
+    serializer_class = jwtserializer
 
-    def get_queryset(self):
-        return BookInstance.objects.filter(borrower=self.request.user).filter(status__exact="b").order_by("due_back")
+    def perform_create(self, serializer):
+        hashed_password = make_password(serializer.validated_data['password'])
+        serializer.validated_data['password'] = hashed_password
+        serializer.save()
+
+
+
+'''To Display All Data present in userdetails'''
+
+
+class UserDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = jwtserializer
+
+
+'''To Display The data according the PK value from userdetails data'''

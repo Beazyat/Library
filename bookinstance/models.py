@@ -12,7 +12,7 @@ class Genre(models.Model):
 
     def __str__(self):
         return self.name
-    #str baray taeen onvan namayesh dar nazar gerefte mishavad
+    # str baray taeen onvan namayesh dar nazar gerefte mishavad
 
 
 class Book(models.Model):
